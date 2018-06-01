@@ -1,0 +1,20 @@
+.container {
+    padding-top: 4.2rem;
+    //columns: 2;
+}
+
+h1 {
+    margin-top: 0;
+}
+
+.chords-lyrics-line {
+    display: flex;
+    align-items: flex-end;
+    flex-direction: row;
+}
+
+.chords {
+    margin-right: 0.5rem;
+    font-weight: bold;
+    color: #d14;
+}
