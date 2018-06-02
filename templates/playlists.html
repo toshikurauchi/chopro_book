@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>Playlists</h1>
+    <div class="collection">
+        {% for playlist in playlists %}
+            <a href={{ url_for('chords', playlist=playlist) }} class="collection-item">{{ playlist }}</a>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="fixed-action-btn">
+    <a href="{{ url_for('playlist_form') }}" class="btn-floating btn-large waves-effect waves-light red"><span class="plus-icon">+</span></a>
+</div>
+
+{% endblock %}

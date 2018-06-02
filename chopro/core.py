@@ -51,7 +51,6 @@ CHOPRO_META_ABBREV = {
     'st': 'subtitle',
 }
 CHOPRO_META_DIRECTIVES += list(CHOPRO_META_ABBREV.keys())
-print(CHOPRO_META_DIRECTIVES)
 class ChoProMeta(object):
     DEFAULT_TITLE = 'ChordPro Song'
 

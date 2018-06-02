@@ -1,21 +1,12 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta charset="UTF-8">
-    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/materialize.min.css') }}">
-    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body>
-    <div class="container">
-        <h1>Músicas</h1>
-        <ul>
-            {% for song in songs %}
-                <li><a href={{ url_for('chords', filename=song_files[song]) }}>{{ song }}</a></li>
-            {% endfor %}
-        </ul>
-    </div>
+{% extends 'base.html' %}
 
-    <script type="text/javascript" src="js/materialize.min.js"></script>
-</body>
-</html>
+{% block content %}
+<div class="container">
+    <h1>Músicas</h1>
+    <div class="collection">
+        {% for song in songs %}
+            <a href={{ url_for('chords', filename=song_files[song]) }} class="collection-item">{{ song }}</a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
