@@ -129,10 +129,21 @@ class ChoPro(object):
 
     HTML_STYLES = ['div', 'table',]
 
-    def __init__(self, chopro_text):
+    def __init__(self, chopro_text, transpose=0):
         self.chopro_lines = chopro_text.split('\n')
         self.modes = set()
+        self.transpose = transpose
         self.is_processed = False
+        self._set_preference(chopro_text)
+    
+    def _set_preference(self, chopro_text):
+        self.preferred_notes = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B']
+        self.other_notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
+
+        for sharp in ['C#', 'D#', 'F#', 'G#', 'A#']:
+            if sharp in chopro_text:
+                self.preferred_notes, self.other_notes = self.other_notes, self.preferred_notes
+                return
 
     def _process(self, html_style):
         """Process the Chopro, extracting lyrics and building the HTML
@@ -223,6 +234,24 @@ class ChoPro(object):
             self.modes.remove(ChoPro.MODE_TAB)
         else:
             html.append('<!-- Unsupported command: %s -->' % command)
+    
+    def transpose_cord(self, chord):
+        orig_chord = chord
+        chord = ''
+        pos = 0
+        for m in re.finditer('[CDEFGAB][#b]?', orig_chord):
+            note = orig_chord[m.start():m.end()]
+            note_idx = -1
+            if note in self.preferred_notes:
+                note_idx = self.preferred_notes.index(note)
+            elif note in self.other_notes:
+                note_idx = self.other_notes.index(note)
+            if note_idx >= 0:
+                note = self.preferred_notes[(note_idx + self.transpose) % len(self.preferred_notes)]
+            chord = chord + orig_chord[pos:m.start()] + note
+            pos = m.end()
+        chord = chord + orig_chord[pos:]
+        return chord
 
     def _process_chopro_line_chords_lyrics(self, line, html_style):
         gre, html = self.gre, self.body_html
@@ -257,7 +286,7 @@ class ChoPro(object):
             # generate chords row
             html.append('<tr class="chords-line">')
             for i in xrange(len(chords)):
-                html.append('<td class="%s">%s</td>' % (self.get_chords_html_classes(), chords[i],))
+                html.append('<td class="%s">%s</td>' % (self.get_chords_html_classes(), self.transpose_cord(chords[i]),))
             html.append('</tr>')
 
             # generate lyrics row
@@ -277,7 +306,7 @@ class ChoPro(object):
             for chord, lyric in zip(chords, lyrics):
                 data = {
                     'chords_classes' : self.get_chords_html_classes(),
-                    'chord' : chord,
+                    'chord' : self.transpose_cord(chord),
                     'lyrics_classes' : self.get_lyrics_html_classes(),
                     'lyric' : lyric,
                 }

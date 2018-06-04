@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<a href="{{ url_for('chords', filename=song_file, transpose=prev_transpose) }}">-</a>
+<a href="{{ url_for('chords', filename=song_file, transpose=next_transpose) }}">+</a>
+
 <div class="container">
     {{ chords|safe }}
 </div>

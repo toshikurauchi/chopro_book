@@ -23,10 +23,10 @@ class Playlist(db.Model):
         return '<Playlist %r>' % self.name
 
 
-def get_html(filename):
+def get_html(filename, transpose):
     with open(filename) as cpfile:
         cpstr = cpfile.read()
-    chopro = ChoPro(cpstr)
+    chopro = ChoPro(cpstr, transpose)
     return chopro.get_html()
 
 
@@ -48,8 +48,10 @@ def playlists():
 
 @app.route('/song')
 def chords():
-    filename = (Path(CHOPRO_DIR) / request.args['filename']).absolute()
-    return render_template('chords.html', chords=get_html(filename))
+    transpose = int(request.args['transpose']) if 'transpose' in request.args else 0
+    filename = request.args['filename']
+    full_filename = (Path(CHOPRO_DIR) / filename).absolute()
+    return render_template('chords.html', chords=get_html(full_filename, transpose), song_file=filename, next_transpose=str(transpose + 1), prev_transpose=str(transpose - 1))
 
 @app.route('/playlist')
 def playlist_form():

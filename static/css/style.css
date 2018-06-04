@@ -8,6 +8,11 @@
     margin-right: 0.5rem;
     font-weight: bold;
     color: #d14;
+    height: 1.5rem;
+}
+
+.lyrics {
+    height: 1.5rem;
 }
 
 .collection-item a {
@@ -16,4 +21,8 @@
 
 .plus-icon {
     font-size: 2rem;
+}
+
+.chord-lyric-block {
+    height: 3rem;
 }
