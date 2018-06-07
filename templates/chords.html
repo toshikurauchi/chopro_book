@@ -1,12 +1,16 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<a href="{{ url_for('chords', filename=song_file, transpose=prev_transpose) }}">-</a>
-<a href="{{ url_for('chords', filename=song_file, transpose=next_transpose) }}">+</a>
 
 <div class="container">
+    <a class='dropdown-trigger btn right' href='#' data-target='tom'>Tom</a>
+
+    <ul id='tom' class='dropdown-content'>
+        <li><a href="{{ url_for('chords', filename=song_file, transpose=prev_transpose) }}"><i class="fas fa-minus"></i></a></li>
+        <li><a href="{{ url_for('chords', filename=song_file, transpose=next_transpose) }}"><i class="fas fa-plus"></i></a></li>
+    </ul>
+
     {{ chords|safe }}
 </div>
 
-<script type="text/javascript" src="js/materialize.min.js"></script>
 {% endblock %}
