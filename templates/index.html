@@ -4,7 +4,7 @@
 <div class="container">
     <h1>Músicas</h1>
     <div class="collection">
-        {% for song in songs %}
+        {% for song in song_files %}
             <a href={{ url_for('chords', filename=song_files[song]) }} class="collection-item">{{ song }}</a>
         {% endfor %}
     </div>

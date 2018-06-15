@@ -3,19 +3,22 @@
 {% block content %}
 <div class="container">
     <div class="input-field h1-field">
-        <input id="playlist_name" type="text" required="required" class="validate" placeholder="Nome">
+        <input id="playlist_name" type="text" required="required" class="validate" placeholder="Nome" value="{{ playlist.name }}">
     </div>
     <div class="row flex-row">
         <div class="col s6">
             <h4>Músicas Selecionadas</h4>
             <ul id="selected-songs" class="s12 songbox collection">
+                {% for song in selected_songs %}
+                    <li data-filename="{{ selected_songs[song] }}"><a href={{ url_for('chords', filename=selected_songs[song]) }} class="collection-item">{{ song }}</a></li>
+                {% endfor %}
             </ul>
-            <form id="playlist-form" action="{{ url_for('playlist_form') }}" method="POST">
+
+            <form id="playlist-form" action="{{ form_action }}" method="POST">
                 <input id="name" type="hidden" name="name" value="">
                 <input id="songs" type="hidden" name="songs" value="">
                 <button type="submit" class="waves-effect waves-light btn-large w100">Salvar</button>
             </form>
-            
         </div>
         <div class="col s6">
             <h4>Músicas Disponíveis</h4>
