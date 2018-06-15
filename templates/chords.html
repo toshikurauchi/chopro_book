@@ -3,11 +3,10 @@
 {% block content %}
 
 <div class="container">
-    <a class='dropdown-trigger btn right' href='#' data-target='tom'>Tom</a>
-
-    <ul id='tom' class='dropdown-content'>
-        <li><a href="{{ url_for('chords', filename=song.filename, transpose=song.prev_transpose) }}"><i class="fas fa-minus"></i></a></li>
-        <li><a href="{{ url_for('chords', filename=song.filename, transpose=song.next_transpose) }}"><i class="fas fa-plus"></i></a></li>
+    <ul class='tone-change'>
+        <li><h5>Tom:</h5></li>
+        <li><a class="waves-effect waves-light btn" href="{{ url_for('chords', filename=song.filename, transpose=song.prev_transpose) }}"><i class="fas fa-minus"></i></a></li>
+        <li><a class="waves-effect waves-light btn" href="{{ url_for('chords', filename=song.filename, transpose=song.next_transpose) }}"><i class="fas fa-plus"></i></a></li>
     </ul>
 
     {{ song.html|safe }}

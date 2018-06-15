@@ -8,6 +8,12 @@
         <div class="col s12 m9 l10">
             {% for song in songs %}
                 <div id="{{ song.slug }}" class="section scrollspy">
+                    <ul class='tone-change'>
+                        <li><h5>Tom:</h5></li>
+                        <li><a class="waves-effect waves-light btn" onclick="updateHtml('{{ song.slug }}', '{{ url_for('playlist_song', pid=song.playlist_song_id, transpose=song.prev_transpose) }}')"><i class="fas fa-minus"></i></a></li>
+                        <li><a class="waves-effect waves-light btn" onclick="updateHtml('{{ song.slug }}', '{{ url_for('playlist_song', pid=song.playlist_song_id, transpose=song.next_transpose) }}')"><i class="fas fa-plus"></i></a></li>
+                    </ul>
+
                     {{ song.html|safe }}
                 </div>
             {% endfor %}

@@ -18,25 +18,68 @@ db = SQLAlchemy(app)
 class Playlist(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), unique=True, nullable=False)
-    songs = db.Column(db.PickleType)
+    songs = db.relationship('PlaylistSong', backref='playlist', cascade="all,delete")
 
-    def __init__(self, id=None, name='', songs=[]):
+    def __init__(self, id=None, name='', song_files=[]):
         self.id = id
         self.name = name
-        self.songs = songs
+        self.song_files = song_files
+        self.new_songs = []
 
     def __repr__(self):
         return '<Playlist %r>' % self.name
+    
+    @property
+    def sorted_songs(self):
+        return sorted(self.songs, key=lambda s: s.index)
+
+    @property
+    def song_files(self):
+        return [s.filename for s in self.sorted_songs]
+
+    @song_files.setter
+    def song_files(self, new_songs):
+        current_songs = {s.filename: s for s in self.songs}
+        self.new_songs = []
+        self.songs = []
+        for index, f in enumerate(new_songs):
+            if f in current_songs:
+                song = current_songs[f]
+                song.index = index
+            else:
+                song = PlaylistSong(self, f, index)
+                self.new_songs.append(song)
+            self.songs.append(song)
 
     @property
     def song_list(self):
-        return [Song(s) for s in self.songs]
+        print([(s.filename, s.index) for s in self.sorted_songs])
+        return [s.song for s in self.sorted_songs]
+
+
+class PlaylistSong(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    filename = db.Column(db.String(120), nullable=False)
+    transpose = db.Column(db.Integer)
+    index = db.Column(db.Integer)
+    playlist_id = db.Column(db.Integer, db.ForeignKey('playlist.id'), nullable=False)
+
+    def __init__(self, playlist, filename, index, transpose=0):
+        self.playlist = playlist
+        self.filename = filename
+        self.index = index
+        self.transpose = transpose
+    
+    @property
+    def song(self):
+        return Song(self.filename, self.transpose, self.id)
 
 
 class Song:
-    def __init__(self, filename, transpose=0):
+    def __init__(self, filename, transpose=0, playlist_song_id=None):
         self.filename = filename
         self.transpose = transpose
+        self.playlist_song_id = playlist_song_id
 
         self.name = clean_name(self.filename)
     
@@ -95,7 +138,7 @@ def playlists():
 
 @app.route('/song')
 def chords():
-    transpose = int(request.args['transpose']) if 'transpose' in request.args else 0
+    transpose = int(request.args.get('transpose', 0))
     song = Song(request.args['filename'], transpose)
     return render_template('chords.html', song=song)
 
@@ -109,9 +152,11 @@ def playlist_form(pid=None):
         if pid is not None:
             playlist = Playlist.query.get(pid)
             playlist.name = name
-            playlist.songs = songs
+            playlist.song_files = songs
         else:
-            playlist = Playlist(name=name, songs=songs)
+            playlist = Playlist(name=name, song_files=songs)
+        for s in playlist.new_songs:
+            db.session.add(s)
         db.session.add(playlist)
         db.session.commit()
         return redirect(url_for('playlist_view', pid=playlist.id))
@@ -131,6 +176,20 @@ def playlist_form(pid=None):
 def playlist_view(pid):
     playlist = Playlist.query.get(pid)
     return render_template('playlist_view.html', playlist=playlist, songs=playlist.song_list)
+
+
+@app.route('/playlist-song/<pid>', methods=['GET'])
+def playlist_song(pid):
+    playlist_song = PlaylistSong.query.get(pid)
+    transpose = int(request.args.get('transpose', 0))
+    playlist_song.transpose = transpose
+    
+    # Save
+    db.session.add(playlist_song)
+    db.session.commit()
+
+    song = playlist_song.song
+    return render_template('playlist_song.html', song=song)
 
 
 if __name__=='__main__':

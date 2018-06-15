@@ -71,3 +71,16 @@
 .h1-field > label {
     font-size: 2.5rem !important;
 }
+
+.tone-change {
+    float: right;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.tone-change a {
+    display: flex;
+    align-items: center;
+    margin: 0 10px;
+}
