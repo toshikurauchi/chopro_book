@@ -10,7 +10,7 @@
             <h4>Músicas Selecionadas</h4>
             <ul id="selected-songs" class="s12 songbox collection">
                 {% for song in selected_songs %}
-                    <li data-filename="{{ selected_songs[song] }}"><a href={{ url_for('chords', filename=selected_songs[song]) }} class="collection-item">{{ song }}</a></li>
+                    <li data-filename="{{ song.filename }}"><a href={{ url_for('chords', filename=song.filename) }} class="collection-item">{{ song.name }}</a></li>
                 {% endfor %}
             </ul>
 
@@ -23,8 +23,8 @@
         <div class="col s6">
             <h4>Músicas Disponíveis</h4>
             <ul id="available-songs" class="collection">
-                {% for song in song_files %}
-                    <li data-filename="{{ song_files[song] }}"><a href={{ url_for('chords', filename=song_files[song]) }} class="collection-item">{{ song }}</a></li>
+                {% for song in available_songs %}
+                    <li data-filename="{{ song.filename }}"><a href={{ url_for('chords', filename=song.filename) }} class="collection-item">{{ song.name }}</a></li>
                 {% endfor %}
             </ul>
         </div>

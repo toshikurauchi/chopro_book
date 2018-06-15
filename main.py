@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 import sys
 import re
-from collections import OrderedDict
 from pathlib import Path
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
@@ -29,15 +28,35 @@ class Playlist(db.Model):
         return '<Playlist %r>' % self.name
 
     @property
-    def songs_dict(self):
-        return OrderedDict((clean_name(s), s) for s in self.songs)
+    def song_list(self):
+        return [Song(s) for s in self.songs]
 
 
-def get_html(filename, transpose):
-    with open(filename) as cpfile:
-        cpstr = cpfile.read()
-    chopro = ChoPro(cpstr, transpose)
-    return chopro.get_html()
+class Song:
+    def __init__(self, filename, transpose=0):
+        self.filename = filename
+        self.transpose = transpose
+
+        self.name = clean_name(self.filename)
+    
+    def __eq__(self, other):
+        return self.filename == other.filename
+
+    @property
+    def html(self):
+        full_filename = (Path(CHOPRO_DIR) / self.filename).absolute()
+        with open(full_filename) as cpfile:
+            cpstr = cpfile.read()
+        chopro = ChoPro(cpstr, self.transpose)
+        return chopro.get_html()
+    
+    @property
+    def next_transpose(self):
+        return str(self.transpose + 1)
+    
+    @property
+    def prev_transpose(self):
+        return str(self.transpose - 1)
 
 
 def clean_name(name):
@@ -47,14 +66,13 @@ def clean_name(name):
 
 def list_songs(ignore=[]):
     path = Path(CHOPRO_DIR)
-    songfiles = sorted([f for f in path.iterdir() if f.name not in ignore])
-    return OrderedDict((clean_name(f.name), f.name) for f in songfiles)
+    songfiles = sorted([Song(f.name) for f in path.iterdir()], key=lambda s: s.filename)
+    return [s for s in songfiles if s not in ignore]
 
 
 @app.route('/')
 def index():
-    songs = list_songs()
-    return render_template('index.html', song_files=songs)
+    return render_template('index.html', songs=list_songs())
 
 
 @app.route('/playlists')
@@ -66,9 +84,8 @@ def playlists():
 @app.route('/song')
 def chords():
     transpose = int(request.args['transpose']) if 'transpose' in request.args else 0
-    filename = request.args['filename']
-    full_filename = (Path(CHOPRO_DIR) / filename).absolute()
-    return render_template('chords.html', chords=get_html(full_filename, transpose), song_file=filename, next_transpose=str(transpose + 1), prev_transpose=str(transpose - 1))
+    song = Song(request.args['filename'], transpose)
+    return render_template('chords.html', song=song)
 
 
 @app.route('/playlist', methods=['GET', 'POST'])
@@ -93,15 +110,15 @@ def playlist_form(pid=None):
     if pid is not None:
         playlist = Playlist.query.get(pid)
         form_action = url_for('playlist_edit', pid=pid)
-    selected_songs = playlist.songs_dict
-    songs = list_songs(ignore=selected_songs.values())
-    return render_template('playlist_form.html', playlist=playlist, selected_songs=selected_songs, song_files=songs, form_action=form_action)
+    selected_songs = playlist.song_list
+    available_songs = list_songs(ignore=selected_songs)
+    return render_template('playlist_form.html', playlist=playlist, selected_songs=selected_songs, available_songs=available_songs, form_action=form_action)
 
 
 @app.route('/playlist/<pid>', methods=['GET'])
 def playlist_view(pid):
     playlist = Playlist.query.get(pid)
-    return render_template('playlist_view.html', playlist=playlist, song_files=playlist.songs_dict)
+    return render_template('playlist_view.html', playlist=playlist, songs=playlist.song_list)
 
 
 if __name__=='__main__':

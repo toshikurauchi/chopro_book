@@ -3,12 +3,12 @@
 {% block content %}
 <div class="container">
     <h1>{{ playlist.name }}</h1>
+    <a href="{{ url_for('playlist_edit', pid=playlist.id) }}" class="waves-effect waves-light btn-small">Editar</a>
     <div class="collection">
-        {% for song in song_files %}
-            <a href={{ url_for('chords', filename=song_files[song]) }} class="collection-item">{{ song }}</a>
+        {% for song in songs %}
+            <a href={{ url_for('chords', filename=song.filename) }} class="collection-item">{{ song.name }}</a>
         {% endfor %}
     </div>
-    <a href="{{ url_for('playlist_edit', pid=playlist.id) }}" class="waves-effect waves-light btn-large">Editar</a>
 
 </div>
 

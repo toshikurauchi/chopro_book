@@ -6,11 +6,11 @@
     <a class='dropdown-trigger btn right' href='#' data-target='tom'>Tom</a>
 
     <ul id='tom' class='dropdown-content'>
-        <li><a href="{{ url_for('chords', filename=song_file, transpose=prev_transpose) }}"><i class="fas fa-minus"></i></a></li>
-        <li><a href="{{ url_for('chords', filename=song_file, transpose=next_transpose) }}"><i class="fas fa-plus"></i></a></li>
+        <li><a href="{{ url_for('chords', filename=song.filename, transpose=song.prev_transpose) }}"><i class="fas fa-minus"></i></a></li>
+        <li><a href="{{ url_for('chords', filename=song.filename, transpose=song.next_transpose) }}"><i class="fas fa-plus"></i></a></li>
     </ul>
 
-    {{ chords|safe }}
+    {{ song.html|safe }}
 </div>
 
 {% endblock %}
