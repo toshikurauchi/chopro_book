@@ -11,7 +11,7 @@ from config import *
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/chopro_book.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///chopro_book.db'
 db = SQLAlchemy(app)
 
 
