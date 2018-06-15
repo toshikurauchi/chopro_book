@@ -26,3 +26,11 @@
 .chord-lyric-block {
     height: 3rem;
 }
+
+.playlist-container {
+    display: flex;
+}
+
+.h100 {
+    height: 100%;
+}
