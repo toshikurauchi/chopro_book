@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>{{ playlist.name }}</h1>
+    <div class="collection">
+        {% for song in songs %}
+            <a href={{ url_for('chords', filename=song_files[song]) }} class="collection-item">{{ song }}</a>
+        {% endfor %}
+    </div>
+
+</div>
+
+{% endblock %}

@@ -5,7 +5,7 @@
     <h1>Playlists</h1>
     <div class="collection">
         {% for playlist in playlists %}
-            <a href={{ url_for('chords', playlist=playlist) }} class="collection-item">{{ playlist }}</a>
+            <a href="#" class="collection-item">{{ playlist.name }}</a>
         {% endfor %}
     </div>
 </div>

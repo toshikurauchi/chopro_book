@@ -27,10 +27,47 @@
     height: 3rem;
 }
 
-.playlist-container {
-    display: flex;
-}
-
 .h100 {
     height: 100%;
+}
+
+.w100 {
+    width: 100%;
+}
+
+.flex-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.flex-row {
+    display: flex;
+    flex-direction: row;
+}
+
+.flex-1 {
+    flex: 1;
+}
+
+.mb-0 {
+    margin-bottom: 0;
+}
+
+.songbox {
+    min-height: 200px;
+}
+
+.h1-field {
+    margin: 2.8rem 0 1.68rem 0 !important;
+}
+
+.h1-field > input {
+    font-size: 4.2rem !important;
+    line-height: 110% !important;
+    margin: 1.1rem 0 1rem !important;
+    padding: 1rem 0 !important;
+}
+
+.h1-field > label {
+    font-size: 2.5rem !important;
 }
