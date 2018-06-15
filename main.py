@@ -2,7 +2,7 @@
 import sys
 import re
 from pathlib import Path
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 
 from chopro import ChoPro
@@ -70,6 +70,8 @@ def playlist_form():
         playlist = Playlist(name=name, songs=songs)
         db.session.add(playlist)
         db.session.commit()
+        return redirect(url_for('playlist_view', pid=playlist.id))
+        
     songs = list_songs()
     return render_template('playlist_form.html', song_files=songs)
 
