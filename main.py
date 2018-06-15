@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 import sys
 import re
+from unicodedata import normalize
 from pathlib import Path
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
@@ -58,6 +59,17 @@ class Song:
     def prev_transpose(self):
         return str(self.transpose - 1)
 
+    @property
+    def slug(self):
+        # Based on: http://flask.pocoo.org/snippets/5/
+        _punct_re = re.compile(r'[\t !"#$%&\'()*\-/<=>?@\[\\\]^_`{|},.]+')
+        result = []
+        for word in _punct_re.split(self.filename.lower()):
+            word = normalize('NFKD', word).encode('ascii', 'ignore')
+            if word:
+                result.append(''.join(map(chr, word)))
+        return '-'.join(result)
+        
 
 def clean_name(name):
     regex = re.compile(r".(chopro|chordpro)$", re.IGNORECASE)

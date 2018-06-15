@@ -4,12 +4,28 @@
 <div class="container">
     <h1>{{ playlist.name }}</h1>
     <a href="{{ url_for('playlist_edit', pid=playlist.id) }}" class="waves-effect waves-light btn-small">Editar</a>
-    <div class="collection">
-        {% for song in songs %}
-            <a href={{ url_for('chords', filename=song.filename) }} class="collection-item">{{ song.name }}</a>
-        {% endfor %}
+    <div class="row">
+        <div class="col s12 m9 l10">
+            {% for song in songs %}
+                <div id="{{ song.slug }}" class="section scrollspy">
+                    {{ song.html|safe }}
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="col hide-on-small-only m3 l2">
+            <ul class="section table-of-contents pinned">
+                {% for song in songs %}
+                    <li><a href="#{{ song.slug }}">{{ song.name }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
 
 </div>
 
+{% endblock %}
+
+{% block extra_js %}
+<script type="text/javascript" src="{{ url_for('static', filename='js/playlist-view.js') }}"></script>
 {% endblock %}
