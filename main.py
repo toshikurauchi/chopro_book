@@ -25,6 +25,7 @@ class Playlist(db.Model):
         self.name = name
         self.song_files = song_files
         self.new_songs = []
+        self.deleted_songs = []
 
     def __repr__(self):
         return '<Playlist %r>' % self.name
@@ -44,12 +45,13 @@ class Playlist(db.Model):
         self.songs = []
         for index, f in enumerate(new_songs):
             if f in current_songs:
-                song = current_songs[f]
+                song = current_songs.pop(f)
                 song.index = index
             else:
                 song = PlaylistSong(self, f, index)
                 self.new_songs.append(song)
             self.songs.append(song)
+        self.deleted_songs = list(current_songs.values())
 
     @property
     def song_list(self):
@@ -157,6 +159,8 @@ def playlist_form(pid=None):
             playlist = Playlist(name=name, song_files=songs)
         for s in playlist.new_songs:
             db.session.add(s)
+        for s in playlist.deleted_songs:
+            db.session.delete(s)
         db.session.add(playlist)
         db.session.commit()
         return redirect(url_for('playlist_view', pid=playlist.id))

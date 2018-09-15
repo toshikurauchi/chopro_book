@@ -27,14 +27,27 @@ window.onload = function() {
         songs.value = songList.join(';;');
         return ok;
     }
+
+    function sort() {
+        var sortableList = $('#available-songs');
+        var listitems = $('li', sortableList);
     
-    function initSortable(el) {
-        var sortable = Sortable.create(el, {group: "songs"});
+        listitems.sort(function (a, b) {
+    
+            return ($(a).text().toUpperCase() > $(b).text().toUpperCase())  ? 1 : -1;
+        });
+        sortableList.append(listitems);    
     }
+
+    $('.toggle-song').click(function() {
+        let listId = this.parentElement.parentElement.id;
+        sort();
+        let otherId = 'selected-songs';
+        if (listId == 'selected-songs') otherId = 'available-songs';        
+        $('#' + otherId).append($(this.parentElement));
+    });
     
-    var el = document.getElementById('selected-songs');
-    initSortable(el);
-    el = document.getElementById('available-songs');
-    initSortable(el);
+    var sortableSelected = Sortable.create(document.getElementById('selected-songs'), {group: "songs" });
+    var sortableAvailable = Sortable.create(document.getElementById('available-songs'), {group: "songs" });
     
 }

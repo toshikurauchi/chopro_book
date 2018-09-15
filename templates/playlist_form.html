@@ -24,7 +24,10 @@
             <h4>Músicas Disponíveis</h4>
             <ul id="available-songs" class="collection">
                 {% for song in available_songs %}
-                    <li data-filename="{{ song.filename }}"><a href={{ url_for('chords', filename=song.filename) }} class="collection-item">{{ song.name }}</a></li>
+                    <li data-filename="{{ song.filename }}" class="collection-item">
+                        <a href={{ url_for('chords', filename=song.filename) }}>{{ song.name }}</a>
+                        <a href="#" class="secondary-content toggle-song"></a>
+                    </li>
                 {% endfor %}
             </ul>
         </div>

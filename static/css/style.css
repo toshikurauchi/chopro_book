@@ -27,6 +27,18 @@
     height: 3rem;
 }
 
+#selected-songs a.toggle-song:after {
+    content: '-';
+}
+
+#available-songs a.toggle-song:after {
+    content: '+';
+}
+
+.collection-item a.toggle-song {
+    width: auto;
+}
+
 .h100 {
     height: 100%;
 }
