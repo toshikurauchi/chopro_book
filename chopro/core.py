@@ -168,7 +168,7 @@ class ChoPro(object):
 
     def get_lyrics(self):
         if not self.is_processed:
-            self._process()
+            self._process('table')
         lyrics_str = re.sub('&nbsp;', ' ', '\n'.join(self.lyrics))
         return lyrics_str
 

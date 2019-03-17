@@ -10,6 +10,9 @@ from chopro import ChoPro
 from config import *
 
 
+SHORT_LIMIT = 100
+
+
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///chopro_book.db'
 db = SQLAlchemy(app)
@@ -82,20 +85,49 @@ class Song:
         self.filename = filename
         self.transpose = transpose
         self.playlist_song_id = playlist_song_id
+        self._lyrics = None
 
         self.name = clean_name(self.filename)
     
     def __eq__(self, other):
         return self.filename == other.filename
 
-    @property
-    def html(self):
+    def chopro(self):
         full_filename = (Path(CHOPRO_DIR) / self.filename).absolute()
         with open(full_filename) as cpfile:
             cpstr = cpfile.read()
-        chopro = ChoPro(cpstr, self.transpose)
-        return chopro.get_html()
+        return ChoPro(cpstr, self.transpose)
+
+    @property
+    def html(self):
+        return self.chopro().get_html()
     
+    @property
+    def lyrics(self):
+        if self._lyrics is None:
+            try:
+                self._lyrics = self.chopro().get_lyrics()
+            except:
+                raise Exception(self.name)
+        return self._lyrics
+    
+    @property
+    def short_lyrics(self):
+        lyrics = self.lyrics
+        short = ''
+        song_started = False
+        for line in lyrics.split('\n'):
+            clean = line.strip()
+            if not song_started and clean:
+                song_started = True
+                if 'intro' in clean.lower():
+                    continue
+            if clean:
+                short += clean + '<br>'
+            if len(short) > SHORT_LIMIT:
+                break
+        return short
+
     @property
     def next_transpose(self):
         return str(self.transpose + 1)

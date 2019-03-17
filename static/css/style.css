@@ -37,6 +37,9 @@
 
 .collection-item a.toggle-song {
     width: auto;
+    grid-column: 2;
+    grid-row: 1;
+    text-align: right;
 }
 
 .h100 {
@@ -67,6 +70,10 @@
 
 .songbox {
     min-height: 200px;
+}
+
+.song {
+    display: grid;
 }
 
 .h1-field {
